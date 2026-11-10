@@ -63,6 +63,7 @@ async def enforce_local_access_only(request: Request, call_next):
 
 
 @app.get("/api/health", tags=["System"])
+@app.get("/health", tags=["System"])
 def health_check():
     """Verify backend operational status."""
     return {
