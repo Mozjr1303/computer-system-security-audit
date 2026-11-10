@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Overview — Computer System Security Audit</title>
+  <meta name="description" content="Academic project: a practical computer system security audit of a Windows 11 workstation across User Accounts, System Updates, File Permissions, Running Services, and Security Configurations.">
+  <meta name="theme-color" content="#e5322d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23f8f6f1' stroke='%2322201c' stroke-width='2.5'/%3E%3Cpath d='M10 16.5l4 4 8-9' fill='none' stroke='%2300706b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-next="methodology.html">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="wrap masthead__inner">
+      <a class="brand" href="index.html" aria-label="Computer System Security Audit, home">
+        <span class="brand__mark" aria-hidden="true">SA</span>
+        <span class="brand__text">
+          <span class="brand__title">Computer System Security Audit</span>
+          <span class="brand__sub">351 CP 81 &middot; Comprehension</span>
+        </span>
+      </a>
+      <nav class="nav" id="site-nav" aria-label="Main">
+        <a href="index.html" aria-current="page"><span class="nav__num">01</span>Project Overview</a>
+        <a href="methodology.html"><span class="nav__num">02</span>Methodology &amp; Tools</a>
+        <a href="findings.html"><span class="nav__num">03</span>Findings &amp; Recommendations</a>
+      </nav>
+      <div class="masthead__tools">
+        <button class="present-btn" type="button" aria-pressed="false" title="Presentation mode: larger text, Previous/Next controls (press P)">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
+          <span class="present-btn__label">Present</span><kbd>P</kbd>
+        </button>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Slide 1: Title -->
+    <section class="hero" data-slide="Title">
+      <div class="wrap">
+        <div>
+          <div class="hero__kicker" data-load style="--i:0">
+            <span class="label">Academic project &middot; 351 CP 81 Comprehension</span>
+            <span class="stamp">Assessment complete</span>
+          </div>
+          <h1 class="hero__title" data-load style="--i:1">Computer System Security Audit</h1>
+          <p class="hero__lede" data-load style="--i:2">
+            An <strong>automated, strictly read-only</strong> security audit of a live Windows 11 workstation.
+            The audit engine inspected the host operating system across five defensive domains, evaluated
+            <strong>31 deterministic security checks</strong>, calculated a 100-point security score, and
+            recorded OS evidence with exact remediation commands for every finding.
+          </p>
+          <div class="hero__actions" data-load style="--i:3">
+            <a class="btn btn--primary" href="findings.html">See the findings
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="btn btn--ghost" href="assets/DEMO_SAMPLE_WinSecAudit_Report.pdf" target="_blank" rel="noopener">Full report (PDF)</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 2: The project in one minute -->
+    <section class="section" id="overview" data-slide="The project in one minute">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">1 &middot; The project</div>
+          <div>
+            <h2 class="section__title">The project in one minute</h2>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="ideas">
+            <div class="idea">
+              <span class="label">The task</span>
+              <h3>Audit a computer's actual security posture</h3>
+              <p>Query accounts, hotfixes, NTFS ACLs, background services, and defensive configurations against CIS benchmarks.</p>
+            </div>
+            <div class="idea">
+              <span class="label">Where</span>
+              <h3>A controlled, read-only local lab</h3>
+              <p>Everything ran on my own Windows 11 laptop on <code>127.0.0.1</code>. No remote hosts or write actions were touched.</p>
+            </div>
+            <div class="idea">
+              <span class="label">The output</span>
+              <h3>Actionable evidence &amp; exact fixes</h3>
+              <p>31 checks scored out of 100, backed by raw OS telemetry, an interactive dashboard, and a formal PDF report.</p>
+            </div>
+          </div>
+
+          <h3 class="label" style="margin: var(--space-xl) 0 var(--space-sm)">Key terms</h3>
+          <div class="terms">
+            <div class="term"><dfn>Security Audit</dfn><p>A systematic check that compares a computer's active settings against established security benchmarks (such as CIS Windows 11 and NIST SP 800-115).</p></div>
+            <div class="term"><dfn>NTFS ACL</dfn><p>The access control list attached to every file and folder that specifies which users or groups can read, modify, or execute it.</p></div>
+            <div class="term"><dfn>LocalSystem Privileges</dfn><p>The highest internal authority in Windows (<code>NT AUTHORITY\System</code>). Services running as LocalSystem have kernel-level control over the operating system.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3: Why it matters -->
+    <section class="section section--tint" id="why" data-slide="Why it matters">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">2 &middot; Background</div>
+          <div>
+            <h2 class="section__title">Why computer system security auditing matters</h2>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="split">
+            <div class="prose">
+              <h3>Background</h3>
+              <p>Most cybersecurity incidents do not begin with exotic zero-day exploits; they exploit <strong>silent configuration drift</strong>. Over months of normal use, software installers register background services with excessive rights, local accounts are created with blank passwords, and security updates stall unnoticed.</p>
+              <p class="detail">Microsoft ships Windows with strong defenses (Defender Antivirus, Windows Firewall, and UAC), but a single misconfigured service or weak password policy can completely undermine those protections once an attacker gains initial foothold.</p>
+            </div>
+            <div class="prose">
+              <h3>Problem statement</h3>
+              <p>Manual host auditing is slow and fragmented. An administrator must check <code>lusrmgr.msc</code> for accounts, <code>net accounts</code> for policies, <code>services.msc</code> for daemon paths, <code>icacls.exe</code> for file permissions, and Registry keys for OS hardening.</p>
+              <p class="detail">Students and security professionals need a <strong>safe, deterministic, and repeatable audit tool</strong> that inspects all five domains automatically without risking harm to the operating system.</p>
+            </div>
+          </div>
+          <p class="statement" style="margin-top: var(--space-xl)">Fix the misconfiguration before an adversary exploits it. <span class="quiet">That is the purpose of host security auditing.</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: Aim and objectives -->
+    <section class="section" id="aim" data-slide="Aim and objectives">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">3 &middot; Aim</div>
+          <div>
+            <h2 class="section__title">Aim and objectives</h2>
+          </div>
+        </div>
+        <div data-reveal>
+          <p class="aim"><span class="label">Main aim</span>Design, implement, and validate an automated read-only Computer System Security Audit system on a live Windows workstation across five core defensive domains.</p>
+          <ol class="stages">
+            <li><h3>User Accounts (20 pts)</h3><p>Verify built-in accounts, password requirement flags, and system-wide password length and lockout policies.</p></li>
+            <li><h3>System Updates (20 pts)</h3><p>Inspect Windows build currency, installed KB hotfixes, days elapsed since latest patch, and update services.</p></li>
+            <li><h3>File &amp; Folder Permissions (20 pts)</h3><p>Parse NTFS ACLs on System32, hosts file, Program Files, and StartUp folders for unprivileged write rights.</p></li>
+            <li class="is-key"><h3>Running Services (15 pts)</h3><p>Detect unquoted service binary paths (CWE-428), legacy services, and third-party binaries running as LocalSystem.</p></li>
+            <li><h3>Security Configurations (25 pts)</h3><p>Audit Windows Defender, 3 Firewall profiles, UAC Secure Desktop, UEFI Secure Boot, SMBv1, and BitLocker.</p></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5: Scope / controlled lab -->
+    <section class="section section--tint" id="scope" data-slide="Scope: a controlled lab">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">4 &middot; Scope</div>
+          <div>
+            <h2 class="section__title">Scope: a controlled, read-only laboratory</h2>
+            <p class="section__intro">All testing was strictly confined to the local loopback boundary (<code>127.0.0.1</code>) on my Windows 11 workstation.</p>
+          </div>
+        </div>
+        <div data-reveal>
+          <figure class="lab">
+            <svg viewBox="0 0 760 300" role="img" aria-labelledby="labTitle labDesc">
+              <title id="labTitle">Laboratory set-up</title>
+              <desc id="labDesc">Inside the laptop boundary, the React dashboard and FastAPI backend communicate on 127.0.0.1 and query the Windows 11 host using read-only PowerShell, WMI, and ACL APIs. External networks and system modifications are blocked.</desc>
+              <rect x="8" y="22" width="560" height="262" rx="4" fill="none" stroke="#cbd0da" stroke-width="1.5"/>
+              <text x="24" y="16" font-size="12" font-weight="700" letter-spacing="1.2" fill="#6c757d">MY LAPTOP &middot; WINDOWS 11 &middot; STRICTLY READ-ONLY LAB</text>
+
+              <rect x="32" y="70" width="140" height="74" rx="3" fill="#f4f5f8" stroke="#cbd0da"/>
+              <text x="102" y="100" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1e24">Analyst UI</text>
+              <text x="102" y="122" text-anchor="middle" font-size="12" fill="#6c757d">React 18 (:5173)</text>
+
+              <rect x="224" y="58" width="150" height="98" rx="3" fill="#1a1e24"/>
+              <text x="299" y="96" text-anchor="middle" font-size="16" font-weight="800" fill="#ffffff">FastAPI Engine</text>
+              <text x="299" y="118" text-anchor="middle" font-size="12" fill="#cbd0da">Read-only runner</text>
+              <text x="299" y="137" text-anchor="middle" font-size="12" fill="#cbd0da">127.0.0.1:8000</text>
+
+              <rect x="420" y="58" width="130" height="98" rx="3" fill="#fef0ef" stroke="#e5322d" stroke-width="1.5"/>
+              <text x="485" y="92" text-anchor="middle" font-size="15" font-weight="800" fill="#1a1e24">Host OS</text>
+              <text x="485" y="114" text-anchor="middle" font-size="12" fill="#383e45">Windows 11</text>
+              <text x="485" y="134" text-anchor="middle" font-size="12" font-weight="700" fill="#e5322d">Build 26200</text>
+
+              <path d="M172 107h44" stroke="#1a1e24" stroke-width="1.5" marker-end="url(#arr)"/>
+              <path d="M374 107h38" stroke="#e5322d" stroke-width="2" marker-end="url(#arrT)"/>
+              <text x="393" y="98" text-anchor="middle" font-size="10" font-weight="700" fill="#e5322d">queries</text>
+
+              <rect x="32" y="186" width="518" height="78" rx="3" fill="#ffffff" stroke="#cbd0da" stroke-dasharray="4 4"/>
+              <text x="48" y="212" font-size="12" font-weight="700" letter-spacing="1" fill="#e5322d">SAFETY &amp; INTEGRITY CONTROLS</text>
+              <text x="48" y="234" font-size="12.5" fill="#1a1e24">PowerShell safety guard blocks all state-changing verbs (Set-, Remove-, Stop-)</text>
+              <text x="48" y="252" font-size="12.5" fill="#1a1e24">Loopback firewall blocks external connections; zero passwords or hashes extracted</text>
+
+              <rect x="608" y="78" width="140" height="62" rx="3" fill="none" stroke="#cbd0da" stroke-dasharray="3 3"/>
+              <text x="678" y="104" text-anchor="middle" font-size="14" font-weight="700" fill="#6c757d">External</text>
+              <text x="678" y="124" text-anchor="middle" font-size="12" fill="#6c757d">network &amp; web</text>
+              <path d="M568 109h36" stroke="#cbd0da" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <path d="M578 99l16 20M594 99l-16 20" stroke="#e5322d" stroke-width="2.2" stroke-linecap="round"/>
+              <text x="678" y="166" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="1" fill="#e5322d">BLOCKED</text>
+
+              <defs>
+                <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1a1e24"/></marker>
+                <marker id="arrT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e5322d"/></marker>
+              </defs>
+            </svg>
+          </figure>
+
+          <div class="table-wrap" style="margin-top: var(--space-lg)">
+            <table>
+              <thead><tr><th scope="col">In scope</th><th scope="col">Out of scope</th></tr></thead>
+              <tbody>
+                <tr><td><span class="scope-in">&#x2713;</span> Windows 11 host settings on <code>127.0.0.1</code></td><td><span class="scope-out">&#x2717;</span> Any external computer or campus network address</td></tr>
+                <tr><td><span class="scope-in">&#x2713;</span> 31 security controls across 5 defensive categories</td><td><span class="scope-out">&#x2717;</span> Password hash cracking or LSASS memory scraping</td></tr>
+                <tr><td><span class="scope-in">&#x2713;</span> Non-destructive, read-only WMI, CIM, and ACL queries</td><td><span class="scope-out">&#x2717;</span> Disabling active services or altering host configurations</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6: The Target Workstation & Executive Summary -->
+    <section class="section" id="target" data-slide="The target system">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">5 &middot; Target</div>
+          <div>
+            <h2 class="section__title">The target: Windows 11 Workstation</h2>
+            <p class="section__intro">A real-world Windows 11 environment running standard productivity, developer, and gaming software.</p>
+          </div>
+        </div>
+        <div class="fslide" data-reveal>
+          <div class="fslide__text">
+            <ol class="objectives">
+              <li><span><strong>Live Host Telemetry.</strong> Evaluated against real local accounts, active background services, and real NTFS security descriptors.</span></li>
+              <li><span><strong>Safe and Non-Destructive.</strong> Command safety filters prevent accidental modifications during scanning.</span></li>
+              <li><span><strong>Standard-Compliant.</strong> Benchmark criteria derived from CIS Microsoft Windows 11 Benchmark v3.0.0 and NIST SP 800-115.</span></li>
+            </ol>
+            <div class="plain">
+              <span class="plain__tag">In plain words</span>
+              <p><dfn>WinSecAudit</dfn> provides an objective security score out of 100. It highlights that even when Windows Defender and Firewall are running perfectly, third-party software and permissive password policies can introduce critical privilege escalation risks.</p>
+            </div>
+          </div>
+          <figure class="plate plate--big">
+            <a class="plate__frame" href="assets/images/01-dashboard-posture.png" target="_blank" rel="noopener">
+              <img src="assets/images/01-dashboard-posture.png" width="1200" height="640" loading="lazy" alt="WinSecAudit Executive Posture Dashboard showing 86.0 out of 100 overall score and 5-domain category breakdown">
+            </a>
+            <figcaption><span class="fig">Fig. 1</span> WinSecAudit Executive Posture Gauge: 86.0 / 100 score on Windows 11 Build 26200.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <a class="next" href="methodology.html">
+        <div>
+          <span class="next__label">Next page &middot; 02</span>
+          <span class="next__title">Methodology &amp; Tools</span>
+        </div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer__grid">
+        <div>
+          <span class="label">Project</span>
+          <h2>Computer System Security Audit</h2>
+          <p>Academic project for 351 CP 81 Comprehension. Supervised by Mr Stainlaus Phillimon. All auditing was strictly confined to a local, read-only Windows workstation environment.</p>
+        </div>
+        <div>
+          <span class="label">Pages</span>
+          <ul>
+            <li><a href="index.html">01 &middot; Project Overview</a></li>
+            <li><a href="methodology.html">02 &middot; Methodology &amp; Tools</a></li>
+            <li><a href="findings.html">03 &middot; Findings &amp; Recommendations</a></li>
+          </ul>
+        </div>
+        <div>
+          <span class="label">Repository &amp; Artefacts</span>
+          <ul>
+            <li><a href="https://github.com/" data-github-repo target="_blank" rel="noopener">GitHub repository</a></li>
+            <li><a href="assets/DEMO_SAMPLE_WinSecAudit_Report.pdf" target="_blank" rel="noopener">Assessment report (PDF)</a></li>
+            <li><a href="assets/DEMO_SAMPLE_WinSecAudit_Report.json" target="_blank" rel="noopener">Scan dataset (JSON)</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer__base">Windows 11 and Microsoft Defender are trademarks of Microsoft Corporation; this site is an independent student academic cybersecurity project.</p>
+    </div>
+  </footer>
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Findings &amp; Recommendations — Computer System Security Audit</title>
+  <meta name="description" content="Empirical security findings, recorded OS evidence, plain language explanations, and exact remediation commands from the Windows 11 host audit.">
+  <meta name="theme-color" content="#e5322d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23f8f6f1' stroke='%2322201c' stroke-width='2.5'/%3E%3Cpath d='M10 16.5l4 4 8-9' fill='none' stroke='%2300706b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-next="index.html">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="wrap masthead__inner">
+      <a class="brand" href="index.html" aria-label="Computer System Security Audit, home">
+        <span class="brand__mark" aria-hidden="true">SA</span>
+        <span class="brand__text">
+          <span class="brand__title">Computer System Security Audit</span>
+          <span class="brand__sub">351 CP 81 &middot; Comprehension</span>
+        </span>
+      </a>
+      <nav class="nav" id="site-nav" aria-label="Main">
+        <a href="index.html"><span class="nav__num">01</span>Project Overview</a>
+        <a href="methodology.html"><span class="nav__num">02</span>Methodology &amp; Tools</a>
+        <a href="findings.html" aria-current="page"><span class="nav__num">03</span>Findings &amp; Recommendations</a>
+      </nav>
+      <div class="masthead__tools">
+        <button class="present-btn" type="button" aria-pressed="false" title="Presentation mode: larger text, Previous/Next controls (press P)">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
+          <span class="present-btn__label">Present</span><kbd>P</kbd>
+        </button>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Slide 1: Results at a glance -->
+    <section class="hero" data-slide="Results at a glance">
+      <div class="wrap">
+        <div class="hero__kicker" data-load style="--i:0"><span class="label">03 &middot; Findings &amp; Recommendations</span></div>
+        <h1 class="hero__title" data-load style="--i:1">Three failed checks, <em>two warnings, 24 passed controls &mdash; all explained and fixable.</em></h1>
+        <p class="hero__lede" data-load style="--i:2">
+          The Windows 11 workstation scored <strong>86.0 / 100</strong>. Core operating system defenses (Defender Antivirus, 3 Firewall profiles, UAC Secure Desktop, update currency, and NTFS ACLs) passed with 100% compliance. However, an unquoted service path in a commercial game launcher, a passwordless admin account, and a 0-character minimum password policy create actionable security risks.
+        </p>
+
+        <div class="distribution" data-load style="--i:3; margin-top: var(--space-xl)">
+          <div class="strip" role="img" aria-label="Audit results: 3 Failed, 2 Warnings, 24 Passed, 2 Not Assessed">
+            <span class="s-high" style="--n:3">3</span>
+            <span class="s-med" style="--n:1">1</span>
+            <span class="s-low" style="--n:1">1</span>
+            <span class="s-info" style="--n:26">26</span>
+          </div>
+          <div class="strip-key">
+            <span><b>3</b> Failed (Critical / High)</span><span><b>1</b> Warning (Medium)</span><span><b>1</b> Warning (Low)</span><span><b>24</b> Passed</span><span><b>2</b> Not Assessed (Elevation)</span>
+          </div>
+        </div>
+
+        <div class="compare" data-load style="--i:4; margin-top: var(--space-xl)">
+          <div>
+            <h3>Weighted Category Scores</h3>
+            <p class="note">Contribution of each domain toward the 100-point total score.</p>
+            <ul class="tally">
+              <li><span>User Accounts (20 pts)</span><b>65.0% (13.0 pts)</b></li>
+              <li><span>System Updates (20 pts)</span><b>100.0% (20.0 pts)</b></li>
+              <li><span>File Permissions (20 pts)</span><b>100.0% (20.0 pts)</b></li>
+              <li><span>Running Services (15 pts)</span><b>53.3% (8.0 pts)</b></li>
+              <li><span>Security Config (25 pts)</span><b>100.0% (25.0 pts)</b></li>
+            </ul>
+          </div>
+          <div>
+            <h3>Actionable Finding Breakdown</h3>
+            <p class="note">Classification of all security observations.</p>
+            <ul class="tally">
+              <li><span class="status status--confirmed">Confirmed Vulnerabilities</span><b>2 (F1, F2)</b></li>
+              <li><span class="status status--potential">Security Weaknesses</span><b>2 (F3, F4)</b></li>
+              <li><span class="status">Configuration Observation</span><b>1 (F5)</b></li>
+              <li><span class="status">Elevation Gated / Baseline</span><b>2 (F6, F7)</b></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 2: Index -->
+    <section class="section" id="summary" data-slide="All findings">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">Summary</div>
+          <div>
+            <h2 class="section__title">All findings</h2>
+            <p class="section__intro">Ordered by severity. Select a finding to jump to its OS evidence and remediation command.</p>
+          </div>
+        </div>
+        <div class="table-wrap" data-reveal>
+          <table class="findex">
+            <thead><tr><th scope="col">#</th><th scope="col">Finding</th><th scope="col">Severity</th><th scope="col">Status</th></tr></thead>
+            <tbody>
+              <tr><td>F1</td><td><a href="#f1">Active Local Administrator Account Has <code>PasswordRequired = False</code></a></td><td><span class="sev sev--high">Critical</span></td><td><span class="status status--confirmed">Confirmed Vulnerability</span></td></tr>
+              <tr><td>F2</td><td><a href="#f2">Unquoted Service Binary Path in <code>UpcElevationService</code> (CWE-428)</a></td><td><span class="sev sev--high">High</span></td><td><span class="status status--confirmed">Confirmed Vulnerability</span></td></tr>
+              <tr><td>F3</td><td><a href="#f3">System Minimum Password Length Policy Set to 0 Characters</a></td><td><span class="sev sev--high">High</span></td><td><span class="status status--potential">Security Weakness</span></td></tr>
+              <tr><td>F4</td><td><a href="#f4">14 Third-Party Services Running as LocalSystem Outside <code>C:\Windows</code></a></td><td><span class="sev sev--med">Medium</span></td><td><span class="status status--potential">Security Weakness</span></td></tr>
+              <tr><td>F5</td><td><a href="#f5">Windows Print Spooler (<code>spoolsv.exe</code>) Running as LocalSystem</a></td><td><span class="sev sev--low">Low</span></td><td><span class="status">Configuration Observation</span></td></tr>
+              <tr><td>F6</td><td><a href="#f6">BitLocker Encryption &amp; Temp Folder Elevation Boundary</a></td><td><span class="sev sev--info">Info</span></td><td><span class="status">Not Assessed (Elevation)</span></td></tr>
+              <tr><td>F7</td><td><a href="#f7">24 Verified Baseline Controls Across Updates, Permissions &amp; Defender</a></td><td><span class="sev sev--info">Pass</span></td><td><span class="status status--confirmed">Compliant Baseline (100%)</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- F1 -->
+    <section class="section section--tint" id="f1" data-slide="F1 · Admin Password Requirement">
+      <div class="wrap">
+        <div class="finding__head" data-reveal>
+          <span class="finding__id">F1</span>
+          <div>
+            <h2 class="finding__title">Active Local Administrator Account Has <code>PasswordRequired = False</code></h2>
+            <div class="finding__tags">
+              <span class="sev sev--high">Critical</span>
+              <span class="status status--confirmed">Confirmed Vulnerability</span>
+              <span class="meta-line detail"><span>Found by: User Accounts Auditor</span><span>Check: <code>USR-004</code></span><span>Source: SAM / <code>Get-LocalUser</code></span></span>
+            </div>
+          </div>
+        </div>
+        <div class="fslide" data-reveal>
+          <div class="fslide__text">
+            <p class="fslide__summary">
+              The primary local account holding membership in <code>BUILTIN\Administrators</code> has its account attribute
+              <code>PasswordRequired</code> set to <code>False</code>. The account can be signed into or elevated without a password barrier.
+            </p>
+            <div class="plain">
+              <span class="plain__tag">In plain words</span>
+              <p><dfn>Passwordless Admin</dfn>: The most powerful account on the machine is configured so Windows does not insist on a password. Anyone sitting at the keyboard can gain administrator privileges without authentication.</p>
+            </div>
+            <div class="block block--impact">
+              <h4>Potential impact</h4>
+              <ul>
+                <li>Allows immediate privilege escalation or local sign-in without credential guessing</li>
+                <li>Completely circumvents User Account Control (UAC) credential dialogs</li>
+              </ul>
+            </div>
+            <div class="block block--fix">
+              <h4>Recommended fix</h4>
+              <ul>
+                <li>Enforce password requirement: <code>net user "&lt;Username&gt;" * /PASSWORDREQ:YES</code></li>
+                <li>Assign a strong passphrase of 14+ characters immediately</li>
+              </ul>
+            </div>
+          </div>
+          <div class="fslide__media">
+            <figure class="plate plate--big">
+              <a class="plate__frame" href="assets/images/02-evidence-admin-password.png" target="_blank" rel="noopener">
+                <img src="assets/images/02-evidence-admin-password.png" width="1200" height="580" loading="lazy" alt="Evidence table showing local user accounts and PasswordRequired=False on active admin account">
+              </a>
+              <figcaption><span class="fig">Fig. 2</span> Telemetry evidence: SAM database query showing active admin account with <code>PasswordRequired = False</code>.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- F2 -->
+    <section class="section" id="f2" data-slide="F2 · Unquoted Service Path">
+      <div class="wrap">
+        <div class="finding__head" data-reveal>
+          <span class="finding__id">F2</span>
+          <div>
+            <h2 class="finding__title">Unquoted Service Binary Path in <code>UpcElevationService</code> (CWE-428)</h2>
+            <div class="finding__tags">
+              <span class="sev sev--high">High</span>
+              <span class="status status--confirmed">Confirmed Vulnerability</span>
+              <span class="meta-line detail"><span>Found by: Running Services Auditor</span><span>Check: <code>SVC-001</code></span><span>Service: <code>UpcElevationService</code> (LocalSystem)</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="fslide" data-reveal>
+          <div class="fslide__text">
+            <p class="fslide__summary">
+              <code>UpcElevationService</code> (Ubisoft Connect Elevation Service) runs as <code>LocalSystem</code>, but its registered
+              executable path contains spaces and is not enclosed in double quotes: <code>C:\Program Files (x86)\Ubisoft\Ubisoft Game Launcher Core\UpcElevationService.exe</code>.
+            </p>
+            <div class="plain">
+              <span class="plain__tag">In plain words</span>
+              <p><dfn>CWE-428</dfn>: Because the path has spaces and no quotes, Windows tries to run <code>C:\Program.exe</code> and <code>C:\Program Files (x86)\Ubisoft\Ubisoft.exe</code> before finding the real program. An attacker who drops a file there gains full <code>LocalSystem</code> control.</p>
+            </div>
+            <div class="block block--impact">
+              <h4>Potential impact</h4>
+              <ul>
+                <li>Local privilege escalation to <code>NT AUTHORITY\System</code> (highest OS privileges)</li>
+                <li>Persistent execution whenever the Ubisoft elevation service is triggered</li>
+              </ul>
+            </div>
+            <div class="block block--fix">
+              <h4>Recommended fix</h4>
+              <ul>
+                <li>Wrap the service executable path in double quotation marks in the Windows Registry:</li>
+              </ul>
+              <pre class="detail"><code>Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\UpcElevationService" -Name "ImagePath" -Value '"C:\Program Files (x86)\Ubisoft\Ubisoft Game Launcher Core\UpcElevationService.exe"'</code></pre>
+            </div>
+          </div>
+          <div class="fslide__media">
+            <figure class="plate plate--big">
+              <a class="plate__frame" href="assets/images/03-evidence-unquoted-service.png" target="_blank" rel="noopener">
+                <img src="assets/images/03-evidence-unquoted-service.png" width="1200" height="580" loading="lazy" alt="Evidence showing UpcElevationService path lacking quotes and running as LocalSystem">
+              </a>
+              <figcaption><span class="fig">Fig. 3</span> Service Control Manager evidence: Unquoted path in <code>UpcElevationService</code> parsed by WinSecAudit.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- F3 -->
+    <section class="section section--tint" id="f3" data-slide="F3 · Minimum Password Length">
+      <div class="wrap">
+        <div class="finding__head" data-reveal>
+          <span class="finding__id">F3</span>
+          <div>
+            <h2 class="finding__title">System Minimum Password Length Policy Set to 0 Characters</h2>
+            <div class="finding__tags">
+              <span class="sev sev--high">High</span>
+              <span class="status status--potential">Security Weakness</span>
+              <span class="meta-line detail"><span>Found by: User Accounts Auditor</span><span>Check: <code>USR-006</code></span><span>Source: <code>net accounts</code></span></span>
+            </div>
+          </div>
+        </div>
+        <div class="fslide" data-reveal>
+          <div class="fslide__text">
+            <p class="fslide__summary">
+              The workstation's local account policy specifies a minimum password length of <code>0</code> characters.
+              Users can change their passwords to empty strings or single characters without Windows enforcing any minimum threshold.
+            </p>
+            <div class="plain">
+              <span class="plain__tag">In plain words</span>
+              <p><dfn>Zero-Length Passwords</dfn>: CIS benchmarks recommend requiring at least 8 to 14 characters. Setting this to 0 allows blank passwords and facilitates brute-force attacks.</p>
+            </div>
+            <div class="block block--impact">
+              <h4>Potential impact</h4>
+              <ul>
+                <li>Enables creation of blank or single-character passwords</li>
+                <li>Directly facilitates Finding F1 (passwordless local administrator account)</li>
+              </ul>
+            </div>
+            <div class="block block--fix">
+              <h4>Recommended fix</h4>
+              <ul>
+                <li>Enforce a minimum length of 12 or 14 characters: <code>net accounts /minpwlen:12</code></li>
+              </ul>
+            </div>
+          </div>
+          <div class="fslide__media">
+            <figure class="plate plate--big">
+              <a class="plate__frame" href="assets/images/04-evidence-password-policy.png" target="_blank" rel="noopener">
+                <img src="assets/images/04-evidence-password-policy.png" width="1200" height="520" loading="lazy" alt="net accounts output showing minimum password length set to 0">
+              </a>
+              <figcaption><span class="fig">Fig. 4</span> Local security policy telemetry: Minimum password length set to <code>0</code>.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- F4 -->
+    <section class="section" id="f4" data-slide="F4 · Third-Party Services">
+      <div class="wrap">
+        <div class="finding__head" data-reveal>
+          <span class="finding__id">F4</span>
+          <div>
+            <h2 class="finding__title">14 Third-Party Services Running as LocalSystem Outside <code>C:\Windows</code></h2>
+            <div class="finding__tags">
+              <span class="sev sev--med">Medium</span>
+              <span class="status status--potential">Security Weakness</span>
+              <span class="meta-line detail"><span>Found by: Running Services Auditor</span><span>Check: <code>SVC-005</code></span><span>136 Running Services Analyzed</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="fslide" data-reveal>
+          <div class="fslide__text">
+            <p class="fslide__summary">
+              Out of 136 running services, 89 run as <code>LocalSystem</code>. 14 of those belong to third-party vendor utilities (such as ASUS Armoury Crate, Dolby DAX, Huawei PC Manager, and Zapret) rather than core Windows OS components.
+            </p>
+            <div class="plain">
+              <span class="plain__tag">In plain words</span>
+              <p><dfn>Least Privilege Violation</dfn>: Background apps for laptop lights and audio drivers have the same kernel-level rights as the Windows operating system itself.</p>
+            </div>
+            <div class="block block--impact">
+              <h4>Potential impact</h4>
+              <ul>
+                <li>Expands the blast radius: a vulnerability in any vendor software grants full system compromise</li>
+              </ul>
+            </div>
+            <div class="block block--fix">
+              <h4>Recommended fix</h4>
+              <ul>
+                <li>Uninstall unused vendor bloatware and downgrade non-essential service logon accounts</li>
+              </ul>
+            </div>
+          </div>
+          <div class="fslide__media">
+            <figure class="plate plate--big">
+              <a class="plate__frame" href="assets/images/05-evidence-third-party-services.png" target="_blank" rel="noopener">
+                <img src="assets/images/05-evidence-third-party-services.png" width="1200" height="540" loading="lazy" alt="PowerShell telemetry showing 14 third party services running as LocalSystem">
+              </a>
+              <figcaption><span class="fig">Fig. 5</span> Third-party service telemetry: 14 non-Windows services running with LocalSystem privileges.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- F5, F6, F7 in dedicated slides -->
+    <section class="section section--tint" id="f5" data-slide="F5 · Print Spooler Service">
+      <div class="wrap">
+        <div class="finding__head" data-reveal>
+          <span class="finding__id">F5</span>
+          <div>
+            <h2 class="finding__title">Windows Print Spooler (<code>spoolsv.exe</code>) Running as LocalSystem</h2>
+            <div class="finding__tags">
+              <span class="sev sev--low">Low</span>
+              <span class="status">Configuration Observation</span>
+              <span class="meta-line detail"><span>Found by: Running Services Auditor</span><span>Check: <code>SVC-004</code></span><span>Binary: <code>spoolsv.exe</code></span></span>
+            </div>
+          </div>
+        </div>
+        <div class="fslide" data-reveal>
+          <div class="fslide__text">
+            <p class="fslide__summary">
+              The Windows Print Spooler service is running automatically as <code>LocalSystem</code>. If the workstation does not require physical document printing, running the spooler exposes legacy RPC endpoints unnecessarily (PrintNightmare attack surface).
+            </p>
+            <div class="block block--fix">
+              <h4>Recommended fix</h4>
+              <p>Disable the spooler if not actively printing: <code>Stop-Service Spooler; Set-Service Spooler -StartupType Disabled</code></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- F6 & F7 -->
+    <section class="section" id="f6" data-slide="F6 · Elevation Boundary">
+      <div class="wrap">
+        <div class="finding__head" data-reveal>
+          <span class="finding__id">F6</span>
+          <div>
+            <h2 class="finding__title">Privilege Boundary: BitLocker &amp; Temp Folder (Not Assessed Under Standard User)</h2>
+            <div class="finding__tags">
+              <span class="sev sev--info">Info</span>
+              <span class="status">Elevation Gated</span>
+              <span class="meta-line detail"><span>Checks: <code>SEC-008</code> &amp; <code>PERM-005</code></span><span>Excluded from scoring denominator</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="fslide" data-reveal>
+          <div class="fslide__text">
+            <p class="fslide__summary">
+              Querying <code>Get-BitLockerVolume</code> and reading the discretionary ACL of <code>C:\Windows\Temp</code> requires Administrator token elevation. When run by a standard user, the audit engine safely classifies these controls as <code>NOT_ASSESSED</code> rather than reporting false failures.
+            </p>
+            <div class="block block--fix">
+              <h4>How to assess all 31 checks</h4>
+              <p>Right-click <code>start_audit_system.bat</code> and select <strong>"Run as administrator"</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- F7: Verified Baseline Controls -->
+    <section class="section section--tint" id="f7" data-slide="F7 · 24 Passed Baseline Controls">
+      <div class="wrap">
+        <div class="finding__head" data-reveal>
+          <span class="finding__id">F7</span>
+          <div>
+            <h2 class="finding__title">24 Verified Baseline Controls Across Updates, Permissions &amp; OS Hardening</h2>
+            <div class="finding__tags">
+              <span class="sev sev--info">Pass</span>
+              <span class="status status--confirmed">100% in 3 of 5 Categories</span>
+              <span class="meta-line detail"><span>All 5 Audited Domains</span><span>Empirical OS Proof</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="fslide" data-reveal>
+          <div class="fslide__text">
+            <p class="fslide__summary">
+              24 of the 29 evaluated checks passed completely, earning 100% scores in System Updates, File &amp; Folder Permissions, and Security Configurations.
+            </p>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Category</th><th>Controls Verified</th><th>Recorded Status</th></tr></thead>
+                <tbody>
+                  <tr><td>System Updates</td><td>5 checks (<code>UPD-001</code>&ndash;<code>005</code>)</td><td>Build 26200 supported; 5 hotfixes; latest patch KB5127648 <strong>7 days ago</strong>; Automatic Updates active</td></tr>
+                  <tr><td>File Permissions</td><td>4 checks (<code>PERM-001</code>&ndash;<code>004</code>)</td><td>48 NTFS ACEs verified; zero unprivileged write rights on System32, hosts file, and Program Files</td></tr>
+                  <tr><td>Security Config</td><td>8 checks (<code>SEC-001</code>&ndash;<code>007</code>, <code>009</code>)</td><td>Defender active; signatures <strong>0 days old</strong>; all 3 Firewall profiles on; UAC Level 2; Secure Boot on</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="fslide__media">
+            <figure class="plate plate--big">
+              <a class="plate__frame" href="assets/images/06-evidence-passed-baseline.png" target="_blank" rel="noopener">
+                <img src="assets/images/06-evidence-passed-baseline.png" width="1200" height="560" loading="lazy" alt="PowerShell evidence showing Defender Antivirus, 3 firewall profiles, and Secure Boot active">
+              </a>
+              <figcaption><span class="fig">Fig. 6</span> Verified baseline defenses: Defender AV, 3 Firewall profiles, and UEFI Secure Boot active.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide: Attack Chain -->
+    <section class="section" id="chain" data-slide="How the weaknesses connect">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">Impact</div>
+          <div>
+            <h2 class="section__title">How the weaknesses connect</h2>
+            <p class="section__intro">Chaining isolated configuration gaps into complete host takeover.</p>
+          </div>
+        </div>
+        <div data-reveal>
+          <ol class="stages">
+            <li><h3>Step 1 &middot; Zero-Length Password Policy (F3)</h3><p>The system allows blank or trivial passwords, facilitating passwordless account persistence.</p></li>
+            <li><h3>Step 2 &middot; Passwordless Admin Account (F1)</h3><p>Active administrator account requires no password, allowing local logon or elevation without credentials.</p></li>
+            <li><h3>Step 3 &middot; Unquoted Service Path (F2)</h3><p>Ubisoft elevation service has unquoted path with spaces, vulnerable to executable planting in parent folder.</p></li>
+            <li class="is-key"><h3>Step 4 &middot; Kernel-Level Execution (F4)</h3><p>Execution as <code>NT AUTHORITY\System</code> grants persistent, total control over the Windows operating system.</p></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide: Conclusion -->
+    <section class="section section--tint" id="conclusion" data-slide="Conclusion">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">Conclusion</div>
+          <div>
+            <h2 class="section__title">Conclusion: turning raw settings into clear security answers</h2>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="split">
+            <div class="prose">
+              <p>This audit proves that even when Windows Defender, the Firewall, and Secure Boot are fully operational, <strong>third-party installers and human account policies can still leave severe privilege escalation doors open</strong>.</p>
+              <p>By automating 31 checks across five core domains, WinSecAudit detected these weaknesses in under four seconds and provided the exact commands needed to raise the workstation's posture score from <strong>86.0 / 100</strong> to <strong>97.0+ / 100</strong>.</p>
+            </div>
+            <div class="prose">
+              <h3>Downloadable Project Artefacts</h3>
+              <ul class="resources">
+                <li><a href="https://github.com/" data-github-repo target="_blank" rel="noopener">GitHub Repository (Full Source Code &amp; Test Suite) &nearr;</a></li>
+                <li><a href="assets/DEMO_SAMPLE_WinSecAudit_Report.pdf" target="_blank" rel="noopener">Sample 14-Section PDF Security Audit Report &nearr;</a></li>
+                <li><a href="assets/DEMO_SAMPLE_WinSecAudit_Report.json" target="_blank" rel="noopener">Raw JSON Audit Telemetry Dataset &nearr;</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <a class="next" href="index.html">
+        <div>
+          <span class="next__label">Back to start &middot; 01</span>
+          <span class="next__title">Project Overview</span>
+        </div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer__grid">
+        <div>
+          <span class="label">Project</span>
+          <h2>Computer System Security Audit</h2>
+          <p>Academic project for 351 CP 81 Comprehension. Supervised by Mr Stainlaus Phillimon. All auditing was strictly confined to a local, read-only Windows workstation environment.</p>
+        </div>
+        <div>
+          <span class="label">Pages</span>
+          <ul>
+            <li><a href="index.html">01 &middot; Project Overview</a></li>
+            <li><a href="methodology.html">02 &middot; Methodology &amp; Tools</a></li>
+            <li><a href="findings.html">03 &middot; Findings &amp; Recommendations</a></li>
+          </ul>
+        </div>
+        <div>
+          <span class="label">Repository &amp; Artefacts</span>
+          <ul>
+            <li><a href="https://github.com/" data-github-repo target="_blank" rel="noopener">GitHub repository</a></li>
+            <li><a href="assets/DEMO_SAMPLE_WinSecAudit_Report.pdf" target="_blank" rel="noopener">Assessment report (PDF)</a></li>
+            <li><a href="assets/DEMO_SAMPLE_WinSecAudit_Report.json" target="_blank" rel="noopener">Scan dataset (JSON)</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer__base">Windows 11 and Microsoft Defender are trademarks of Microsoft Corporation; this site is an independent student academic cybersecurity project.</p>
+    </div>
+  </footer>
+  <script src="js/script.js"></script>
+</body>
+</html>

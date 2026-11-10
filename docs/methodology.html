@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Methodology &amp; Tools — Computer System Security Audit</title>
+  <meta name="description" content="Technical methodology, seven-stage pipeline, elevation handling, and 100-point scoring model for the Windows 11 host security audit.">
+  <meta name="theme-color" content="#e5322d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23f8f6f1' stroke='%2322201c' stroke-width='2.5'/%3E%3Cpath d='M10 16.5l4 4 8-9' fill='none' stroke='%2300706b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-next="findings.html">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="wrap masthead__inner">
+      <a class="brand" href="index.html" aria-label="Computer System Security Audit, home">
+        <span class="brand__mark" aria-hidden="true">SA</span>
+        <span class="brand__text">
+          <span class="brand__title">Computer System Security Audit</span>
+          <span class="brand__sub">351 CP 81 &middot; Comprehension</span>
+        </span>
+      </a>
+      <nav class="nav" id="site-nav" aria-label="Main">
+        <a href="index.html"><span class="nav__num">01</span>Project Overview</a>
+        <a href="methodology.html" aria-current="page"><span class="nav__num">02</span>Methodology &amp; Tools</a>
+        <a href="findings.html"><span class="nav__num">03</span>Findings &amp; Recommendations</a>
+      </nav>
+      <div class="masthead__tools">
+        <button class="present-btn" type="button" aria-pressed="false" title="Presentation mode: larger text, Previous/Next controls (press P)">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
+          <span class="present-btn__label">Present</span><kbd>P</kbd>
+        </button>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Slide 1: Hero -->
+    <section class="hero" data-slide="How the assessment was done">
+      <div class="wrap">
+        <div>
+          <div class="hero__kicker" data-load style="--i:0"><span class="label">02 &middot; Methodology &amp; Tools</span></div>
+          <h1 class="hero__title" data-load style="--i:1">Automated host inspection, <em>backed by recorded OS evidence.</em></h1>
+          <p class="hero__lede" data-load style="--i:2">
+            The WinSecAudit engine queried Windows internals directly through non-interactive PowerShell, WMI/CIM,
+            Registry keys, and NTFS Access Control Lists. Every check was validated against CIS Microsoft Windows 11
+            benchmarks and scored transparently using a deterministic 100-point model.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 2: Environment -->
+    <section class="section" id="environment" data-slide="The lab environment">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">1 &middot; Environment</div>
+          <div>
+            <h2 class="section__title">The audited host environment</h2>
+            <p class="section__intro">One Windows 11 workstation, strictly local loopback queries, and standard Windows security interfaces.</p>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th scope="col">Component</th><th scope="col">Specification</th></tr></thead>
+              <tbody>
+                <tr><td>Target Operating System</td><td>Microsoft Windows 11 Home (64-bit), Build <code>26200</code></td></tr>
+                <tr><td>Audit Backend Server</td><td>Python 3.11 + FastAPI + Uvicorn on <code>http://127.0.0.1:8000</code></td></tr>
+                <tr><td>Interactive Dashboard</td><td>React 18 + TypeScript + Vite + Tailwind CSS v4 on <code>http://127.0.0.1:5173</code></td></tr>
+                <tr><td>OS Telemetry Interfaces</td><td>PowerShell 5.1, WMI / CIMv2, Windows Registry, <code>Get-Acl</code>, <code>net accounts</code></td></tr>
+                <tr><td>Database &amp; Reports</td><td>SQLite 3 (<code>SQLAlchemy 2.0</code>) + ReportLab Platypus PDF Engine</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="plain" style="margin-top: var(--space-lg)">
+            <span class="plain__tag">In plain words</span>
+            <p><dfn>127.0.0.1</dfn> is the computer's loopback interface. The audit backend only talks to this computer itself; it cannot be reached from any Wi-Fi network or external website, and it does not make outbound network requests.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3: Tools -->
+    <section class="section section--tint" id="tools" data-slide="Tools and their roles">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">2 &middot; Tools</div>
+          <div>
+            <h2 class="section__title">Technologies and their roles</h2>
+            <p class="section__intro">Every component has an explicit, modular responsibility in the auditing pipeline.</p>
+          </div>
+        </div>
+        <div class="tools" data-reveal>
+          <div class="tool tool--primary">
+            <div><h3 class="tool__name">PowerShell 5.1 &amp; WMI/CIM</h3><p class="tool__meta">OS Telemetry Layer</p></div>
+            <div class="prose">
+              <p class="tool__role">Primary telemetry collector.</p>
+              <p>Executes non-interactive cmdlets (<code>Get-LocalUser</code>, <code>Win32_Service</code>, <code>Get-Acl</code>, <code>Get-MpComputerStatus</code>) and streams structured JSON payloads back to the engine.</p>
+            </div>
+          </div>
+          <div class="tool">
+            <div><h3 class="tool__name">FastAPI &amp; Python 3.11</h3><p class="tool__meta">Core Scoring Engine</p></div>
+            <div class="prose">
+              <p class="tool__role">Orchestration and validation.</p>
+              <p>Applies the 100-point scoring algorithm, enforces command safety policies, validates payloads with Pydantic v2 schemas, and serves 12 REST endpoints.</p>
+            </div>
+          </div>
+          <div class="tool">
+            <div><h3 class="tool__name">React 18 &amp; Recharts</h3><p class="tool__meta">Analyst Dashboard</p></div>
+            <div class="prose">
+              <p class="tool__role">Interactive visual evaluation.</p>
+              <p>Provides radial posture gauges, category radar charts, filterable 31-check tables, and raw JSON telemetry inspectors for security analysts.</p>
+            </div>
+          </div>
+          <div class="tool">
+            <div><h3 class="tool__name">SQLite &amp; ReportLab</h3><p class="tool__meta">Persistence &amp; Reporting</p></div>
+            <div class="prose">
+              <p class="tool__role">Dossier generation.</p>
+              <p>Maintains historical audit scans in local SQLite storage and compiles formal multi-page PDF audit reports with color-coded severity badges.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: Process -->
+    <section class="section" id="process" data-slide="The auditing process">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">3 &middot; Process</div>
+          <div>
+            <h2 class="section__title">The auditing process in seven stages</h2>
+            <p class="section__intro">From initial privilege detection to persistence and formal PDF report compilation.</p>
+          </div>
+        </div>
+        <div data-reveal>
+          <ol class="stages">
+            <li><h3>01 &middot; Elevation &amp; Context Check</h3><p>Detect OS build, hostname, architecture, and current process token (Standard User vs Administrator).</p></li>
+            <li><h3>02 &middot; User Account Enumeration</h3><p>Query local accounts, SIDs, Administrator group membership, password requirement flags, and password policies.</p></li>
+            <li><h3>03 &middot; Patch Currency Analysis</h3><p>Query installed KB hotfixes, days elapsed since latest patch, and Windows Update service configuration.</p></li>
+            <li><h3>04 &middot; NTFS ACL Inspection</h3><p>Retrieve Access Control Entries on 6 critical system directories and verify that standard users lack write rights.</p></li>
+            <li><h3>05 &middot; Service Binary Parsing</h3><p>Inspect all registered services for unquoted paths with spaces (CWE-428) and third-party LocalSystem services.</p></li>
+            <li><h3>06 &middot; OS Hardening Verification</h3><p>Audit Defender Antivirus, Real-Time Protection, 3 Firewall profiles, UAC Secure Desktop, and Secure Boot.</p></li>
+            <li><h3>07 &middot; Scoring &amp; PDF Report</h3><p>Calculate 100-point posture score, store audit records in SQLite, and compile the formal assessment dossier.</p></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5: A Problem Solved (Coverage & Safety) -->
+    <section class="section section--tint" id="coverage" data-slide="A problem solved: safety and elevation">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">4 &middot; Engineering</div>
+          <div>
+            <h2 class="section__title">A problem solved: safety &amp; elevation boundaries</h2>
+            <p class="section__intro">Guaranteeing non-destructive execution while handling elevation-gated Windows APIs gracefully.</p>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="split">
+            <div class="prose">
+              <h3>Read-Only Command Safety Guard</h3>
+              <p>To eliminate any chance of accidental modification, the PowerShell execution layer in <code>powershell.py</code> inspects every script block with a static regular-expression filter (<code>FORBIDDEN_VERBS</code>). Any command containing state-changing verbs such as <code>Set-</code>, <code>Remove-</code>, <code>Stop-</code>, <code>Disable-</code>, or <code>New-</code> is rejected immediately.</p>
+            </div>
+            <div class="prose">
+              <h3>Elevation Handling (<code>NOT_ASSESSED</code>)</h3>
+              <p>Certain low-level security APIs — such as querying BitLocker volume status (<code>Get-BitLockerVolume</code>) — require Administrator elevation and return <code>Access Denied</code> under a Standard User token. Instead of crashing or producing false failures, the engine marks these checks as <code>NOT_ASSESSED</code> and excludes them from the score denominator.</p>
+            </div>
+          </div>
+
+          <div class="plain" style="margin-top: var(--space-xl)">
+            <span class="plain__tag">In plain words</span>
+            <p>If an auditor does not have administrative rights, they should not report that BitLocker is broken. They should accurately report <strong>"Not Assessed — Elevation Required"</strong> and grade the remaining 29 controls fairly.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6: Scoring Formula -->
+    <section class="section" id="scoring" data-slide="Scoring formula">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">5 &middot; Scoring</div>
+          <div>
+            <h2 class="section__title">Transparent 100-point scoring model</h2>
+            <p class="section__intro">Mathematical weighting across all five assessed categories.</p>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th scope="col">Domain</th><th scope="col">Checks</th><th scope="col">Weight</th><th scope="col">Host Result</th><th scope="col">Earned Score</th></tr></thead>
+              <tbody>
+                <tr><td><strong>User Accounts</strong></td><td>7 checks (<code>USR-001</code>&ndash;<code>007</code>)</td><td>20 pts</td><td>5 Pass, 2 Fail</td><td><strong>13.0 / 20 pts (65.0%)</strong></td></tr>
+                <tr><td><strong>System Updates</strong></td><td>5 checks (<code>UPD-001</code>&ndash;<code>005</code>)</td><td>20 pts</td><td>5 Pass, 0 Fail</td><td><strong>20.0 / 20 pts (100.0%)</strong></td></tr>
+                <tr><td><strong>File Permissions</strong></td><td>5 checks (<code>PERM-001</code>&ndash;<code>005</code>)</td><td>20 pts</td><td>4 Pass, 1 N/A</td><td><strong>20.0 / 20 pts (100.0%)</strong></td></tr>
+                <tr><td><strong>Running Services</strong></td><td>5 checks (<code>SVC-001</code>&ndash;<code>005</code>)</td><td>15 pts</td><td>2 Pass, 1 Fail, 2 Warn</td><td><strong>8.0 / 15 pts (53.3%)</strong></td></tr>
+                <tr><td><strong>Security Configurations</strong></td><td>9 checks (<code>SEC-001</code>&ndash;<code>009</code>)</td><td>25 pts</td><td>8 Pass, 1 N/A</td><td><strong>25.0 / 25 pts (100.0%)</strong></td></tr>
+                <tr><td><strong>Total Posture Score</strong></td><td><strong>31 checks total</strong></td><td><strong>100 pts</strong></td><td><strong>24 Pass, 3 Fail, 2 Warn, 2 N/A</strong></td><td><strong>86.0 / 100 (Elevated Risk)</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 7: Severity Ratings & Classification -->
+    <section class="section section--tint" id="severity" data-slide="Severity rating">
+      <div class="wrap">
+        <div class="section__head" data-reveal>
+          <div class="section__num">6 &middot; Classification</div>
+          <div>
+            <h2 class="section__title">How severity was rated</h2>
+            <p class="section__intro">Severity levels mirror industry standards (NIST SP 800-115 &amp; CIS Benchmarks).</p>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th scope="col">Severity</th><th scope="col">Definition</th><th scope="col">Empirical Example</th></tr></thead>
+              <tbody>
+                <tr><td><span class="sev sev--high">Critical / High</span></td><td>Permits passwordless sign-in or immediate privilege escalation to LocalSystem.</td><td>Admin account with <code>PasswordRequired=False</code>; Unquoted service path in <code>UpcElevationService</code></td></tr>
+                <tr><td><span class="sev sev--med">Medium</span></td><td>Weakens defense-in-depth or expands third-party attack surface.</td><td>14 non-Windows services running with unrestricted <code>LocalSystem</code> privileges</td></tr>
+                <tr><td><span class="sev sev--low">Low</span></td><td>Default service exposure that increases minor attack surface.</td><td>Print Spooler (<code>spoolsv.exe</code>) enabled automatically on non-printing workstation</td></tr>
+                <tr><td><span class="sev sev--info">Pass / Info</span></td><td>Verified baseline security control adhering to CIS guidelines.</td><td>24 controls verified: Defender AV, 3 Firewall profiles, UAC Secure Desktop, Secure Boot</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <a class="next" href="findings.html">
+        <div>
+          <span class="next__label">Next page &middot; 03</span>
+          <span class="next__title">Findings &amp; Recommendations</span>
+        </div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer__grid">
+        <div>
+          <span class="label">Project</span>
+          <h2>Computer System Security Audit</h2>
+          <p>Academic project for 351 CP 81 Comprehension. Supervised by Mr Stainlaus Phillimon. All auditing was strictly confined to a local, read-only Windows workstation environment.</p>
+        </div>
+        <div>
+          <span class="label">Pages</span>
+          <ul>
+            <li><a href="index.html">01 &middot; Project Overview</a></li>
+            <li><a href="methodology.html">02 &middot; Methodology &amp; Tools</a></li>
+            <li><a href="findings.html">03 &middot; Findings &amp; Recommendations</a></li>
+          </ul>
+        </div>
+        <div>
+          <span class="label">Repository &amp; Artefacts</span>
+          <ul>
+            <li><a href="https://github.com/" data-github-repo target="_blank" rel="noopener">GitHub repository</a></li>
+            <li><a href="assets/DEMO_SAMPLE_WinSecAudit_Report.pdf" target="_blank" rel="noopener">Assessment report (PDF)</a></li>
+            <li><a href="assets/DEMO_SAMPLE_WinSecAudit_Report.json" target="_blank" rel="noopener">Scan dataset (JSON)</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer__base">Windows 11 and Microsoft Defender are trademarks of Microsoft Corporation; this site is an independent student academic cybersecurity project.</p>
+    </div>
+  </footer>
+  <script src="js/script.js"></script>
+</body>
+</html>
